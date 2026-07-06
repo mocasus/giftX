@@ -7,3 +7,7 @@ venv/
 *.log
 xploit/screenshots/
 xploit/user_data/
+debug_*.py
+debug_*.png
+sessions/
+

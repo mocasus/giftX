@@ -13,6 +13,7 @@ from config import BOT_TOKEN, DURATIONS
 
 logger = logging.getLogger(__name__)
 
+
 # --- /gift @username ---
 async def cmd_gift(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Parse /gift <username> → show duration picker."""
@@ -20,9 +21,9 @@ async def cmd_gift(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if not args:
         await update.message.reply_text(
-            "❌ *Usage:* `/gift @username`\n\n"
-            "Contoh: `/gift @elonmusk`",
-            parse_mode="Markdown",
+            "❌ <b>Usage:</b> <code>/gift @username</code>\n\n"
+            "Contoh: <code>/gift @elonmusk</code>",
+            parse_mode="HTML",
         )
         return
 
@@ -41,9 +42,9 @@ async def cmd_gift(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard.append([InlineKeyboardButton("❌ Batal", callback_data="gift:cancel")])
 
     await update.message.reply_text(
-        f"🎁 *Gift Premium untuk @{target}*\n\n"
+        f"🎁 <b>Gift Premium untuk @{target}</b>\n\n"
         f"Pilih durasi:",
-        parse_mode="Markdown",
+        parse_mode="HTML",
         reply_markup=InlineKeyboardMarkup(keyboard),
     )
 
@@ -63,9 +64,9 @@ async def cb_gift_duration(update: Update, context: ContextTypes.DEFAULT_TYPE):
     label = DURATIONS.get(duration_key, duration_key)
 
     await query.edit_message_text(
-        f"⏳ *Processing...*\n\n"
+        f"⏳ <b>Processing...</b>\n\n"
         f"Gifting {label} ke @{target}...",
-        parse_mode="Markdown",
+        parse_mode="HTML",
     )
 
     try:
@@ -79,24 +80,24 @@ async def cb_gift_duration(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await context.bot.send_photo(
                     chat_id=query.message.chat_id,
                     photo=open(result["screenshot"], "rb"),
-                    caption=f"✅ *Success!*\n@{tgt} dapet {label} X Premium 🎁",
-                    parse_mode="Markdown",
+                    caption=f"✅ <b>Success!</b>\n@{tgt} dapet {label} X Premium 🎁",
+                    parse_mode="HTML",
                 )
                 await query.edit_message_text(
-                    f"✅ *Success!*\n@{tgt} dapet {label} X Premium 🎁\n📸 Screenshot di atas",
-                    parse_mode="Markdown",
+                    f"✅ <b>Success!</b>\n@{tgt} dapet {label} X Premium 🎁\n📸 Screenshot di atas",
+                    parse_mode="HTML",
                 )
             else:
                 await query.edit_message_text(
-                    f"✅ *Success!*\n@{tgt} dapet {label} X Premium 🎁",
-                    parse_mode="Markdown",
+                    f"✅ <b>Success!</b>\n@{tgt} dapet {label} X Premium 🎁",
+                    parse_mode="HTML",
                 )
         else:
             err = result.get("error", "Unknown error")
             try:
                 await query.edit_message_text(
-                    f"❌ *Gagal:* {err}\n\nCoba lagi atau cek log.",
-                    parse_mode="Markdown",
+                    f"❌ <b>Gagal:</b> {err}\n\nCoba lagi atau cek log.",
+                    parse_mode="HTML",
                 )
             except Exception:
                 logger.error("Gift failed + edit_message failed: %s", err)
@@ -104,8 +105,8 @@ async def cb_gift_duration(update: Update, context: ContextTypes.DEFAULT_TYPE):
         logger.exception("Gift flow error")
         try:
             await query.edit_message_text(
-                f"💥 *Error:* {str(e)[:200]}",
-                parse_mode="Markdown",
+                f"💥 <b>Error:</b> {str(e)[:200]}",
+                parse_mode="HTML",
             )
         except Exception:
             logger.error("Could not send error message to user")
@@ -115,7 +116,7 @@ async def cb_gift_duration(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def cb_gift_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-    await query.edit_message_text("🚫 *Dibatalkan.*", parse_mode="Markdown")
+    await query.edit_message_text("🚫 <b>Dibatalkan.</b>", parse_mode="HTML")
 
 
 def register(app: Application) -> None:

@@ -9,17 +9,17 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     is_admin = user.id in ADMIN_IDS
     
     text = (
-        f"🎁 *giftX — Auto Gift X Premium*\n\n"
+        f"🎁 <b>giftX — Auto Gift X Premium</b>\n\n"
         f"Halo {user.first_name}!\n"
         f"Bot ini auto-gift X Premium ke akun target\n"
         f"pakai exploit bank transfer SEPA.\n\n"
-        f"📌 *Cara pakai:*\n"
-        f"`/gift @username` — Gift premium (3/6/12 bln)\n"
-        f"`/list` — Lihat history gift\n"
+        f"📌 <b>Cara pakai:</b>\n"
+        f"<code>/gift @username</code> — Gift premium (3/6/12 bln)\n"
+        f"<code>/list</code> — Lihat history gift\n"
     )
     
     if is_admin:
-        text += f"\n🔧 *Admin:*\n`/stats` — Statistik\n`/reload` — Reload config\n"
+        text += f"\n🔧 <b>Admin:</b>\n<code>/stats</code> — Statistik\n<code>/reload</code> — Reload config\n"
     
     keyboard = [
         [InlineKeyboardButton("🎁 Gift Premium", callback_data="menu:gift")],
@@ -28,17 +28,17 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     await update.message.reply_text(
         text,
-        parse_mode="Markdown",
+        parse_mode="HTML",
         reply_markup=InlineKeyboardMarkup(keyboard),
     )
 
 async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "🎁 *giftX Help*\n\n"
-        "`/gift @username` — Gift X Premium (pilih durasi)\n"
-        "`/list` — History gift\n"
-        "`/cancel` — Batalkan proses\n",
-        parse_mode="Markdown",
+        "🎁 <b>giftX Help</b>\n\n"
+        "<code>/gift @username</code> — Gift X Premium (pilih durasi)\n"
+        "<code>/list</code> — History gift\n"
+        "<code>/cancel</code> — Batalkan proses\n",
+        parse_mode="HTML",
     )
 
 async def cb_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -50,10 +50,10 @@ async def cb_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if action == "gift":
         await query.edit_message_text(
-            "🎁 *Gift X Premium*\n\n"
-            "Kirim: `/gift @username`\n"
-            "Contoh: `/gift @elonmusk`",
-            parse_mode="Markdown",
+            "🎁 <b>Gift X Premium</b>\n\n"
+            "Kirim: <code>/gift @username</code>\n"
+            "Contoh: <code>/gift @elonmusk</code>",
+            parse_mode="HTML",
         )
     elif action == "list":
         from db import get_user_orders
@@ -62,21 +62,21 @@ async def cb_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         if not orders:
             await query.edit_message_text(
-                "📋 *History Gift*\n\n"
-                "Belum ada order. Mulai dengan `/gift @username`!",
-                parse_mode="Markdown",
+                "📋 <b>History Gift</b>\n\n"
+                "Belum ada order. Mulai dengan <code>/gift @username</code>!",
+                parse_mode="HTML",
             )
         else:
-            lines = ["📋 *History Gift*\n"]
+            lines = ["📋 <b>History Gift</b>\n"]
             for row in orders:
                 oid, uid, target, status, created, completed, err, ss = row
                 icon = "✅" if status == "done" else ("❌" if status == "failed" else "⏳")
-                lines.append(f"{icon} @{target} — *{status}*")
-                lines.append(f"  _{created}_")
+                lines.append(f"{icon} @{target} — <b>{status}</b>")
+                lines.append(f"  <i>{created}</i>")
             lines.append(f"\nTotal: {len(orders)} order")
-            await query.edit_message_text("\n".join(lines), parse_mode="Markdown")
+            await query.edit_message_text("\n".join(lines), parse_mode="HTML")
     else:
-        await query.edit_message_text("🤷 *Menu gak dikenal.*", parse_mode="Markdown")
+        await query.edit_message_text("🤷 <b>Menu gak dikenal.</b>", parse_mode="HTML")
 
 
 def register(app: Application) -> None:
