@@ -15,18 +15,12 @@ X_2FA_SECRET = os.getenv("X_2FA_SECRET", "")
 
 PROXY_URL = os.getenv("PROXY_URL", "")
 
-# SMS receive service for bank details
-SMS_SERVICE_API_KEY = os.getenv("SMS_SERVICE_API_KEY", "")
-SMS_SERVICE_BASE = os.getenv("SMS_SERVICE_BASE", "https://api.sms-activate.org/stubs/handler_api.php")
-
 DB_PATH = os.getenv("DB_PATH", "data/giftx.db")
 
-# Gift duration options (months)
 DURATIONS = {
-    "3": "3 Months",
-    "6": "6 Months", 
-    "12": "12 Months",
+    "3": "3 Bulan",
+    "6": "6 Bulan",
+    "12": "12 Bulan",
 }
 
-# Validate critical config
 READY = bool(BOT_TOKEN and X_EMAIL and X_PASSWORD)
