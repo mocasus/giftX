@@ -73,9 +73,8 @@ async def cb_gift_duration(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_id = update.effective_user.id
         result = await run_gift(target, user_id, duration_key)
 
-        tgt = target
         if result["success"]:
-            ss_note = ""
+            tgt = target
             if result.get("screenshot"):
                 await context.bot.send_photo(
                     chat_id=query.message.chat_id,
@@ -83,10 +82,14 @@ async def cb_gift_duration(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     caption=f"✅ *Success!*\n@{tgt} dapet {label} X Premium 🎁",
                     parse_mode="Markdown",
                 )
-                ss_note = "\n📸 Screenshot di atas"
+                # Update processing message too
+                await query.edit_message_text(
+                    f"✅ *Success!*\n@{tgt} dapet {label} X Premium 🎁\n📸 Screenshot di atas",
+                    parse_mode="Markdown",
+                )
             else:
                 await query.edit_message_text(
-                    f"✅ *Success!*\n@{tgt} dapet {label} X Premium 🎁{ss_note}",
+                    f"✅ *Success!*\n@{tgt} dapet {label} X Premium 🎁",
                     parse_mode="Markdown",
                 )
         else:

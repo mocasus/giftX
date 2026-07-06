@@ -1,7 +1,7 @@
 """Admin-only handlers."""
 
 from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes, filters
+from telegram.ext import Application, CommandHandler, ContextTypes
 from config import ADMIN_IDS
 from db import get_stats, init_db
 
