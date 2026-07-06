@@ -34,7 +34,7 @@ def main():
     admin.register(app)
     
     print("🚀 giftX bot starting...")
-    app.run_polling(allowed_updates=["messages", "callback_query"])
+    app.run_polling(allowed_updates=["message", "callback_query"])
 
 if __name__ == "__main__":
     main()
