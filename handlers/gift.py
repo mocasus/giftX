@@ -82,7 +82,6 @@ async def cb_gift_duration(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     caption=f"✅ *Success!*\n@{tgt} dapet {label} X Premium 🎁",
                     parse_mode="Markdown",
                 )
-                # Update processing message too
                 await query.edit_message_text(
                     f"✅ *Success!*\n@{tgt} dapet {label} X Premium 🎁\n📸 Screenshot di atas",
                     parse_mode="Markdown",
@@ -94,16 +93,22 @@ async def cb_gift_duration(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
         else:
             err = result.get("error", "Unknown error")
-            await query.edit_message_text(
-                f"❌ *Gagal:* {err}\n\nCoba lagi atau cek log.",
-                parse_mode="Markdown",
-            )
+            try:
+                await query.edit_message_text(
+                    f"❌ *Gagal:* {err}\n\nCoba lagi atau cek log.",
+                    parse_mode="Markdown",
+                )
+            except Exception:
+                logger.error("Gift failed + edit_message failed: %s", err)
     except Exception as e:
         logger.exception("Gift flow error")
-        await query.edit_message_text(
-            f"💥 *Error:* {str(e)}",
-            parse_mode="Markdown",
-        )
+        try:
+            await query.edit_message_text(
+                f"💥 *Error:* {str(e)[:200]}",
+                parse_mode="Markdown",
+            )
+        except Exception:
+            logger.error("Could not send error message to user")
 
 
 # --- callback: cancel ---
