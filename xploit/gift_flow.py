@@ -11,11 +11,14 @@ SIMPLE FLOW:
 """
 
 import asyncio
+import logging
 import os
 from datetime import datetime
 from pathlib import Path
 from config import DURATIONS
 from xploit.browser import create_browser, login_x, safe_close
+
+logger = logging.getLogger(__name__)
 
 SCREENSHOT_DIR = Path(__file__).parent / "screenshots"
 
@@ -37,14 +40,18 @@ async def run_gift(target_username: str, user_id: int, duration: str = "12") -> 
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         ss_path = str(SCREENSHOT_DIR / f"gift_{user_id}_{ts}.png")
         
+        logger.info("Starting gift flow: target=@%s duration=%s", target_username, duration)
         browser = await create_browser(headless=True)
         page = await browser.get("https://x.com/login")
         
         # 1. Login
+        logger.info("Attempting login...")
         if not await login_x(browser, page):
             result["error"] = "Login gagal — periksa kredensial Akun A"
+            logger.error("Login failed")
             return result
         
+        logger.info("Login OK, navigating to target...")
         await page.sleep(3)
         
         # 2. Buka profil target
@@ -53,24 +60,31 @@ async def run_gift(target_username: str, user_id: int, duration: str = "12") -> 
         await page.sleep(5)
         
         # 3. Klik gift icon
+        logger.info("Looking for gift button...")
         if not await _click_gift(page):
             result["error"] = "Tombol gift tidak ditemukan — Akun A mungkin tidak premium"
+            logger.error("Gift button not found")
             return result
         
+        logger.info("Gift button clicked, selecting duration...")
         await page.sleep(5)
         
         # 4. Pilih durasi
         if not await _select_duration(page, duration):
             result["error"] = f"Gagal memilih durasi {duration} bulan"
+            logger.error("Duration selection failed")
             return result
         
+        logger.info("Duration selected, choosing payment method...")
         await page.sleep(5)
         
         # 5. Pilih Bank Transfer
         if not await _select_bank_payment(page):
             result["error"] = "Opsi Bank Transfer tidak muncul — pastikan VPN Jerman aktif"
+            logger.error("Bank payment option not found")
             return result
         
+        logger.info("Bank payment selected, filling form...")
         await page.sleep(5)
         
         # 6. Isi detail bank
@@ -78,6 +92,7 @@ async def run_gift(target_username: str, user_id: int, duration: str = "12") -> 
         await page.sleep(3)
         
         # 7. Submit
+        logger.info("Submitting...")
         await _click_continue(page)
         await page.sleep(8)
         
@@ -86,10 +101,12 @@ async def run_gift(target_username: str, user_id: int, duration: str = "12") -> 
         await page.save_screenshot(ss_path)
         result["screenshot"] = ss_path
         
+        logger.info("Gift flow completed successfully!")
         result["success"] = True
         return result
         
     except Exception as e:
+        logger.exception("Gift flow crashed")
         result["error"] = str(e)
         return result
     finally:
